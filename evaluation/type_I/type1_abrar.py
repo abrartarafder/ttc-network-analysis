@@ -10,11 +10,12 @@ Expected folder structure (run from project root TTC-NETWORK-ANALYSIS/):
   dataset/
     Complete GTFS/
       stops.txt
-      stop_times.txt
+      stop_times.csv
       trips.txt
       routes.txt
     completegtfs/
       stops.csv
+      stop_times.csv
       routes.csv
     disruptions/
       subway/subway_data.csv
@@ -33,6 +34,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np
+import csv
 
 matplotlib.use("Agg")   # headless — swap to "TkAgg" if running interactively
 
@@ -73,7 +75,7 @@ print(f"  → {len(stops)} stops loaded")
 # STEP 2 — BUILD EDGES from stop_times
 # ═══════════════════════════════════════════════════════════════════════════════
 #
-# GTFS stop_times.txt lists every stop a trip visits, in order.
+# GTFS stop_times.csv lists every stop a trip visits, in order.
 # An EDGE exists between stop A → stop B when B is visited immediately
 # after A on the same trip.
 #
@@ -83,7 +85,7 @@ print(f"  → {len(stops)} stops loaded")
 #   3. (stop_id, next_stop) pairs = directed edges
 #   4. Deduplicate — we want topology, not counts (yet)
 #
-# stop_times.txt is 363 MB (~12 M rows).  For quick iteration, sample
+# stop_times.csv is large.  For quick iteration, sample
 # the first N rows.  For the final project, set SAMPLE_ROWS = None.
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -91,11 +93,27 @@ print("Step 2 — Building edges from stop_times …")
 
 SAMPLE_ROWS = 500_000   # set to None for the full dataset (slower)
 
-stop_times = pd.read_csv(
-    "dataset/Complete GTFS/stop_times.txt",
-    usecols=["trip_id", "stop_id", "stop_sequence"],
-    nrows=SAMPLE_ROWS,
-)
+
+def load_stop_times_csv(path):
+    needed_columns = {"trip_id", "stop_id", "stop_sequence"}
+    df = pd.read_csv(
+        path,
+        usecols=lambda col: col.strip().strip('"') in needed_columns,
+        nrows=SAMPLE_ROWS,
+        encoding="utf-8-sig",
+        quoting=csv.QUOTE_NONE,
+    )
+    df.columns = df.columns.str.strip().str.strip('"')
+    df["trip_id"] = df["trip_id"].astype(str).str.strip('"')
+    return df
+
+
+try:
+    stop_times = load_stop_times_csv("dataset/completegtfs/stop_times.csv")
+    print("  (loaded from dataset/completegtfs/stop_times.csv)")
+except FileNotFoundError:
+    stop_times = load_stop_times_csv("dataset/Complete GTFS/stop_times.csv")
+    print("  (loaded from dataset/Complete GTFS/stop_times.csv)")
 
 # Sort so consecutive rows within a trip are in sequence order
 stop_times = stop_times.sort_values(["trip_id", "stop_sequence"])

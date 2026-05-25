@@ -1,0 +1,21 @@
+trial,source_id,source_name,dest_id,dest_name,algorithm,runtime_s,edges_evaluated,path_cost,hops,same_cost
+1,2141,Bayview Ave at Eglinton Ave ,478,Midland Ave at Lockie Ave No,Dijkstra,0.006002,8324,3127,97,True
+1,2141,Bayview Ave at Eglinton Ave ,478,Midland Ave at Lockie Ave No,A*,0.014919,8288,3127,97,True
+2,6403,Birchmount Rd at Steeles Ave,5815,Victoria Park Ave at Ferncre,Dijkstra,0.002664,3392,2852,110,True
+2,6403,Birchmount Rd at Steeles Ave,5815,Victoria Park Ave at Ferncre,A*,0.005497,3349,2852,110,True
+3,5385,Vaughan Rd at Maplewood Ave ,2705,Glen Rd at Elm Ave,Dijkstra,0.006891,9621,4174,131,True
+3,5385,Vaughan Rd at Maplewood Ave ,2705,Glen Rd at Elm Ave,A*,0.016368,9617,4174,131,True
+4,1965,Weston Rd at Gunns Rd,43066,Yonge St at Gerrard St West ,Dijkstra,0.005073,7228,2390,71,True
+4,1965,Weston Rd at Gunns Rd,43066,Yonge St at Gerrard St West ,A*,0.012426,7188,2390,71,True
+5,1667,Markham Rd at 14Th Ave,9249,Ossington Ave at Leeds St,Dijkstra,0.007897,9347,4043,125,True
+5,1667,Markham Rd at 14Th Ave,9249,Ossington Ave at Leeds St,A*,0.019166,9341,4043,125,True
+6,605,Kingston Rd at McCowan Rd,567,McLevin Ave at Malvern St,Dijkstra,0.001657,2228,1287,40,True
+6,605,Kingston Rd at McCowan Rd,567,McLevin Ave at Malvern St,A*,0.003548,2137,1287,40,True
+7,1798,Eglinton Ave West at Duplex ,5297,Avenue Rd at Lawrence Ave We,Dijkstra,3.9e-05,46,300,12,True
+7,1798,Eglinton Ave West at Duplex ,5297,Avenue Rd at Lawrence Ave We,A*,7e-05,46,300,12,True
+8,5566,Jane St at Eglinton Ave West,11337,Gerrard St East at Woodfield,Dijkstra,0.007335,9684,4002,122,True
+8,5566,Jane St at Eglinton Ave West,11337,Gerrard St East at Woodfield,A*,0.017045,9678,4002,122,True
+9,506,2040 Don Mills Rd,4922,Anglesey Blvd at Pinehurst C,Dijkstra,0.006449,9289,3383,77,True
+9,506,2040 Don Mills Rd,4922,Anglesey Blvd at Pinehurst C,A*,0.016478,9273,3383,77,True
+10,43059,2231 Lawrence Ave East,9202,Rogers Rd at Oakwood Ave,Dijkstra,0.004057,6140,2686,74,True
+10,43059,2231 Lawrence Ave East,9202,Rogers Rd at Oakwood Ave,A*,0.011066,6094,2686,74,True

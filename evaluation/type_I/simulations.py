@@ -1,5 +1,5 @@
 """
-Simple TTC Disruption Simulation
+TTC Disruption Simulation
 ================================
 1. Builds the TTC graph using graphBuilder.py.
 2. Picks one source and destination stop.

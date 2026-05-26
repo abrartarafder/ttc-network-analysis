@@ -1,5 +1,5 @@
 """
-EECS4414 — TTC Shortest-Path Routing: Dijkstra vs A*
+TTC Shortest-Path Routing: Dijkstra vs A*
 ======================================================
 Compares Dijkstra's algorithm and A* search on the TTC stop network.
 Graph construction is delegated to graph_builder.py so the same graph

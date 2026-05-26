@@ -1,5 +1,5 @@
 """
-EECS4414 — TTC Graph Builder (Shared Module)
+TTC Graph Builder 
 =============================================
 Builds the directed stop-to-stop TTC network from GTFS data.
 Import this in any analysis script to get a consistent graph:

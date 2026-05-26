@@ -1,5 +1,5 @@
 """
-EECS4414 — TTC Transit Network: Metrics & Visualisation
+TTC Transit Network: Metrics & Visualisation
 =========================================================
 Computes centrality metrics and produces static visualisations for the
 TTC stop network.  Graph construction is delegated to graph_builder.py

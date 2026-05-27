@@ -1,31 +1,31 @@
 trial,source_id,source_name,dest_id,dest_name,weight_method,runtime_s,path_cost,hops
-1,2610,Weston Rd at Northland Ave,6198,Brookbanks Dr at Valley Wo,Trip Frequency,0.00374,1785.0,89
-1,2610,Weston Rd at Northland Ave,6198,Brookbanks Dr at Valley Wo,Travel Time,0.002787,3707.5,63
-1,2610,Weston Rd at Northland Ave,6198,Brookbanks Dr at Valley Wo,Hop Count,0.003778,62.0,62
-2,2224,Brenyon Way at Walkway to ,2058,Lawrence Ave East at Marco,Trip Frequency,0.000981,1281.0,31
-2,2224,Brenyon Way at Walkway to ,2058,Lawrence Ave East at Marco,Travel Time,0.00053,2557.0,31
-2,2224,Brenyon Way at Walkway to ,2058,Lawrence Ave East at Marco,Hop Count,0.000127,31.0,31
-3,3910,William R Allen Rd at Rimr,6353,Finch Ave East at Maxome A,Trip Frequency,0.001116,1100.0,19
-3,3910,William R Allen Rd at Rimr,6353,Finch Ave East at Maxome A,Travel Time,0.000222,1506.0,25
-3,3910,William R Allen Rd at Rimr,6353,Finch Ave East at Maxome A,Hop Count,0.000204,19.0,19
-4,6534,Wilson Ave at Ridge Rd Eas,5144,Parliament St at King St E,Trip Frequency,0.007326,3226.0,69
-4,6534,Wilson Ave at Ridge Rd Eas,5144,Parliament St at King St E,Travel Time,0.002571,4177.5,69
-4,6534,Wilson Ave at Ridge Rd Eas,5144,Parliament St at King St E,Hop Count,0.005478,69.0,69
-5,7706,Carlaw Ave at Gerrard St E,5011,John Garland Blvd at James,Trip Frequency,0.003252,4024.0,78
-5,7706,Carlaw Ave at Gerrard St E,5011,John Garland Blvd at James,Travel Time,0.00614,7050.0,126
-5,7706,Carlaw Ave at Gerrard St E,5011,John Garland Blvd at James,Hop Count,0.002995,77.0,77
-6,6185,715 Milner Ave,11338,Bluffers Park Rd at Brimle,Trip Frequency,0.003732,2618.0,75
-6,6185,715 Milner Ave,11338,Bluffers Park Rd at Brimle,Travel Time,0.000843,3097.0,67
-6,6185,715 Milner Ave,11338,Bluffers Park Rd at Brimle,Hop Count,0.00075,55.0,55
-7,10552,Ian MacDonald Blvd at The ,5939,Park Lane Cir at Lawrence ,Trip Frequency,0.003767,1984.0,65
-7,10552,Ian MacDonald Blvd at The ,5939,Park Lane Cir at Lawrence ,Travel Time,0.00422,5249.5,78
-7,10552,Ian MacDonald Blvd at The ,5939,Park Lane Cir at Lawrence ,Hop Count,0.004065,61.0,61
-8,978,Runnymede Rd at St John's ,1771,Walsh Ave at Wilson Ave,Trip Frequency,0.001662,1974.0,60
-8,978,Runnymede Rd at St John's ,1771,Walsh Ave at Wilson Ave,Travel Time,0.001088,2819.5,46
-8,978,Runnymede Rd at St John's ,1771,Walsh Ave at Wilson Ave,Hop Count,0.001084,45.0,45
-9,9281,Kingston Rd at Pine Ridge ,6437,Royal York Rd at Strath Hu,Trip Frequency,0.006812,3180.0,94
-9,9281,Kingston Rd at Pine Ridge ,6437,Royal York Rd at Strath Hu,Travel Time,0.005484,6377.5,128
-9,9281,Kingston Rd at Pine Ridge ,6437,Royal York Rd at Strath Hu,Hop Count,0.004864,88.0,88
-10,849,Bathurst St at Covington R,73,Davisville Ave at Forman A,Trip Frequency,9.5e-05,1099.0,24
-10,849,Bathurst St at Covington R,73,Davisville Ave at Forman A,Travel Time,5.1e-05,1286.0,24
-10,849,Bathurst St at Covington R,73,Davisville Ave at Forman A,Hop Count,4.2e-05,24.0,24
+1,2610,Weston Rd at Northland Ave,6198,Brookbanks Dr at Valley Wo,Trip Frequency,0.004521,1.58,92
+1,2610,Weston Rd at Northland Ave,6198,Brookbanks Dr at Valley Wo,Travel Time,0.002851,3707.5,63
+1,2610,Weston Rd at Northland Ave,6198,Brookbanks Dr at Valley Wo,Hop Count,0.004669,62.0,62
+2,2224,Brenyon Way at Walkway to ,2058,Lawrence Ave East at Marco,Trip Frequency,0.000171,1.41,33
+2,2224,Brenyon Way at Walkway to ,2058,Lawrence Ave East at Marco,Travel Time,0.00131,2557.0,31
+2,2224,Brenyon Way at Walkway to ,2058,Lawrence Ave East at Marco,Hop Count,0.00012,31.0,31
+3,3910,William R Allen Rd at Rimr,6353,Finch Ave East at Maxome A,Trip Frequency,4.7e-05,0.47,22
+3,3910,William R Allen Rd at Rimr,6353,Finch Ave East at Maxome A,Travel Time,0.00012,1506.0,25
+3,3910,William R Allen Rd at Rimr,6353,Finch Ave East at Maxome A,Hop Count,0.000191,19.0,19
+4,6534,Wilson Ave at Ridge Rd Eas,5144,Parliament St at King St E,Trip Frequency,0.00483,1.66,110
+4,6534,Wilson Ave at Ridge Rd Eas,5144,Parliament St at King St E,Travel Time,0.003421,4177.5,69
+4,6534,Wilson Ave at Ridge Rd Eas,5144,Parliament St at King St E,Hop Count,0.006486,69.0,69
+5,7706,Carlaw Ave at Gerrard St E,5011,John Garland Blvd at James,Trip Frequency,0.001929,1.41,109
+5,7706,Carlaw Ave at Gerrard St E,5011,John Garland Blvd at James,Travel Time,0.005748,7050.0,126
+5,7706,Carlaw Ave at Gerrard St E,5011,John Garland Blvd at James,Hop Count,0.003142,77.0,77
+6,6185,715 Milner Ave,11338,Bluffers Park Rd at Brimle,Trip Frequency,0.000581,1.38,81
+6,6185,715 Milner Ave,11338,Bluffers Park Rd at Brimle,Travel Time,0.000618,3097.0,67
+6,6185,715 Milner Ave,11338,Bluffers Park Rd at Brimle,Hop Count,0.000605,55.0,55
+7,10552,Ian MacDonald Blvd at The ,5939,Park Lane Cir at Lawrence ,Trip Frequency,0.008145,2.9,123
+7,10552,Ian MacDonald Blvd at The ,5939,Park Lane Cir at Lawrence ,Travel Time,0.004058,5249.5,78
+7,10552,Ian MacDonald Blvd at The ,5939,Park Lane Cir at Lawrence ,Hop Count,0.003574,61.0,61
+8,978,Runnymede Rd at St John's ,1771,Walsh Ave at Wilson Ave,Trip Frequency,0.001009,1.09,60
+8,978,Runnymede Rd at St John's ,1771,Walsh Ave at Wilson Ave,Travel Time,0.001066,2819.5,46
+8,978,Runnymede Rd at St John's ,1771,Walsh Ave at Wilson Ave,Hop Count,0.001146,45.0,45
+9,9281,Kingston Rd at Pine Ridge ,6437,Royal York Rd at Strath Hu,Trip Frequency,0.005382,2.15,144
+9,9281,Kingston Rd at Pine Ridge ,6437,Royal York Rd at Strath Hu,Travel Time,0.005834,6377.5,128
+9,9281,Kingston Rd at Pine Ridge ,6437,Royal York Rd at Strath Hu,Hop Count,0.004931,88.0,88
+10,849,Bathurst St at Covington R,73,Davisville Ave at Forman A,Trip Frequency,4.7e-05,0.59,24
+10,849,Bathurst St at Covington R,73,Davisville Ave at Forman A,Travel Time,5.6e-05,1286.0,24
+10,849,Bathurst St at Covington R,73,Davisville Ave at Forman A,Hop Count,4.1e-05,24.0,24

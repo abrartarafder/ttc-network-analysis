@@ -1,5 +1,5 @@
 """
-TTC Graph Builder 
+EECS4414 — TTC Graph Builder (Shared Module)
 =============================================
 Builds the directed stop-to-stop TTC network from GTFS data.
 Import this in any analysis script to get a consistent graph:
@@ -18,7 +18,9 @@ Returns
 -------
 G : nx.DiGraph
     Full directed graph.  Each node has: name, lat, lon.
-    Each edge has: weight (trip-frequency count).
+    Each edge has: weight (1 / trip-frequency count).
+                   Lower weight = more trips = cheaper for Dijkstra.
+                   Dijkstra therefore favours well-served corridors.
 giant : nx.DiGraph
     Subgraph induced by the largest weakly-connected component of G.
 
@@ -132,8 +134,10 @@ def build_graph(sample_rows: int = DEFAULT_SAMPLE_ROWS):
     edge_weights = (
         edges_df.groupby(["stop_id", "next_stop"])
         .size()
-        .reset_index(name="weight")
+        .reset_index(name="trip_count")
     )
+    # Invert so Dijkstra treats high-frequency edges as cheaper (more desirable)
+    edge_weights["weight"] = 1.0 / edge_weights["trip_count"]
     print(f"  [graph_builder] {len(edge_weights):,} unique directed edges")
 
     # ── Step 3: construct DiGraph ─────────────────────────────────────────────
@@ -152,7 +156,8 @@ def build_graph(sample_rows: int = DEFAULT_SAMPLE_ROWS):
             G.add_edge(
                 row["stop_id"],
                 row["next_stop"],
-                weight=row["weight"],
+                weight=row["weight"],        # 1 / trip_count  (lower = busier)
+                trip_count=row["trip_count"], # raw trip frequency for reference
             )
 
     print(f"  [graph_builder] graph built → "

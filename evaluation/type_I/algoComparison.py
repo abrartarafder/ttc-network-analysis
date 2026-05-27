@@ -1,5 +1,5 @@
 """
-TTC Shortest-Path Routing: Dijkstra vs A*
+EECS4414 — TTC Shortest-Path Routing: Dijkstra vs A*
 ======================================================
 Compares Dijkstra's algorithm and A* search on the TTC stop network.
 Graph construction is delegated to graph_builder.py so the same graph
@@ -91,12 +91,23 @@ def haversine_km(lat1, lon1, lat2, lon2):
 
 def astar_heuristic(u, v):
     """
-    Admissible heuristic: straight-line geographic distance.
+    Admissible heuristic: scaled geographic distance.
+
+    Edge weights are now 1/trip_count (small fractional values, typically
+    0.01-1.0).  The raw Haversine distance in km is much larger than any
+    single edge weight, which would make the heuristic inadmissible and
+    cause A* to miss the optimal path.
+
+    Dividing by 10,000 keeps the heuristic below the smallest possible
+    edge weight (1/1 = 1.0 for a single-trip edge) while still providing
+    meaningful directional guidance toward the destination.
+
     Returns 0 if coordinate data is unavailable (safe fallback).
     """
     try:
         ud, vd = giant.nodes[u], giant.nodes[v]
-        return haversine_km(ud["lat"], ud["lon"], vd["lat"], vd["lon"])
+        km = haversine_km(ud["lat"], ud["lon"], vd["lat"], vd["lon"])
+        return km / 10000
     except (KeyError, TypeError):
         return 0.0
 

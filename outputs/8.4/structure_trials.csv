@@ -1,0 +1,33 @@
+structure,trial,source_id,source_name,target_id,target_name,runtime_s,edges_evaluated,path_cost,hops
+Directed full graph,1,7890,Bathurst St at Briar Hill Ave,1050.0,Yonge St at Empress Ave - North York Centre Station,0.00945066699932795,9760,3.22189923013825,126
+Directed full graph,2,7413,Old Weston Rd at Steeles Ave West,6828.0,Lawson Rd at Highway 2A Overpass,0.004988040996977361,5450,1.7545363625053727,116
+Directed full graph,3,10491,Flemington Rd at Dynasty Lane,8614.0,Glencairn Ave at Bathurst St West Side,0.003551292000338435,4617,2.0858628407708166,71
+Directed full graph,4,6716,Bayview Ave at Tudor Gate North Side,4183.0,Castlemore Ave at Mingay Ave,0.009075291000044672,10034,5.197110132885452,117
+Directed full graph,5,10334,590 Rathburn Rd,10183.0,Queen St West at John St,0.0047640000011597294,5877,2.4955956307744964,156
+Directed full graph,6,4219,Lake Shore Blvd West at Fortieth St,11211.0,Finch Ave West at Tangiers Rd East Side,0.005489375002071029,7047,2.358437119324551,67
+Directed full graph,7,10421,Evans Ave at Gamma St,6467.0,Lawson Rd at Cedarview Dr East Side,0.006203375000040978,7467,3.405989971276466,160
+Directed full graph,8,439,Jones Ave at Gerrard St East North Side,1245.0,441 Ellesmere Rd,0.0032112080007209443,4047,1.7370534546540812,105
+Largest weakly connected component,1,7559,85 Emmett Ave,5589.0,Weston Rd at Humber Blvd,7.14999987394549e-05,85,0.24765191719107024,14
+Largest weakly connected component,2,11339,Bluffers Park Rd at Brimley Rd,3799.0,Keele Station at Bus Bay 5,0.005768333998275921,6228,1.5436743275323308,128
+Largest weakly connected component,3,7019,Kipling Ave at The Kingsway,1943.0,Lawrence Ave West at De Marco Blvd West Side,0.001767624999047257,2228,1.5354067896480148,96
+Largest weakly connected component,4,9236,Weston Rd at McCormack St,143.0,Denton Ave at Madelaine Ave,0.007523374999436783,9232,2.321811595831105,117
+Largest weakly connected component,5,1610,Woodbine Ave at Barker Ave,5860.0,Danforth Rd at Wetherby Dr,0.0013759590001427568,1738,1.2343983959487779,59
+Largest weakly connected component,6,10581,Lawson Rd at Brumwell St East Side,9790.0,Bloor St West at Shaver Ave North,0.006574166000063997,8171,2.3599391663490525,150
+Largest weakly connected component,7,42445,Lansdowne Ave at Paton Rd North Side,7784.0,1120 Martin Grove Rd @ Highway 409,0.0050874170010501985,6595,1.974858188460021,99
+Largest weakly connected component,8,18782,Willowdale Ave at Parkview Ave North Side,6315.0,Beechgrove Dr at Janellan Ter,0.004771874999278225,6055,2.175604518441109,98
+Undirected giant component,1,10175,Dundas St West at Chelsea Ave North Side,5590.0,Alness St at Flint Rd,0.0015687080012867227,2871,0.6886526379821925,38
+Undirected giant component,2,10097,Caledonia Rd at Rogers Rd,7782.0,Dupont St at Bedford Rd,0.010796665999805555,18084,1.5697183185662558,56
+Undirected giant component,3,11222,9690 Markham Rd,9978.0,Bathurst St at Codsell Ave,0.005948709000222152,11107,2.372439865333822,86
+Undirected giant component,4,19754,Bloor St East at Yonge St East Side,10563.0,Glencairn Ave at Haven Rd East Side,0.010353499998018378,18512,1.8632101907570273,67
+Undirected giant component,5,318,Kennedy Rd at Brigstock Rd,43170.0,Bermondsey Rd at Hollinger Rd,0.0055253330028790515,10477,1.0627940142548173,42
+Undirected giant component,6,9725,6793-6823 Steeles Ave West,5414.0,3636 Weston Rd,0.00029562499912572093,625,0.37424486357348363,23
+Undirected giant component,7,34809,Mt Pleasant Rd at Eglinton Ave East,9176.0,York Mills Rd at Valentine Dr,0.0029563330026576295,5715,0.7826954252219437,29
+Undirected giant component,8,3886,York Mills Station at Bus Bay 1,4512.0,Queens Quay Loop at Lower Spadina Ave,0.007880582998041064,13807,0.9808691128605135,49
+Hub neighborhood component,1,5498,Finch Ave East at McCowan Rd,5018.0,McCowan Rd at Sheppard Ave East,6.708000000799075e-06,1,0.021739130434782608,1
+Hub neighborhood component,2,1137,Ellesmere Rd at McCowan Rd,40036.0,Kennedy Station at Bus Bay 11,1.7082998965634033e-05,23,0.03424193712928002,6
+Hub neighborhood component,3,3850,Scarborough Centre Station at Bus Bay 12,123.0,Brimley Rd at Progress Ave,2.195799970650114e-05,33,0.04026284348864994,2
+Hub neighborhood component,4,4396,Eglinton Ave East at Kennedy Station,4929.0,South Service Rd at Transway Cres,1.5165998775046319e-05,25,0.043478260869565216,1
+Hub neighborhood component,5,1202,Grangeway Ave at Progress Ave South Side,41043.0,Midland Ave at Lawrence Ave East South Side,1.2624997907551005e-05,18,0.22660582716118838,5
+Hub neighborhood component,6,6857,Triton Rd at Borough Dr,1357.0,Eglinton Ave East at Midland Ave,3.9375001506414264e-05,64,0.06537681532298173,7
+Hub neighborhood component,7,42511,McCowan Rd at Bushby Dr,1566.0,Lawrence Ave East at Kennedy Rd East Side,3.775000004679896e-05,61,2.1971171007333017,14
+Hub neighborhood component,8,4056,Sheppard Ave East at Lamont Ave East Side,4421.0,Ellesmere Rd at McCowan Rd East Side,3.8459002098534256e-05,67,0.09921073078967817,5

@@ -1,0 +1,49 @@
+sample_rows,size_label,trial,source_id,source_name,target_id,target_name,algorithm,runtime_s,edges_evaluated,path_cost,hops
+100000,100k rows,1,6001,Lake Shore Blvd West at Mimico Ave,3755,Sheppard West Station at Bus Bay 7,Dijkstra,0.005293666999932611,4960,9.55523423730993,121
+100000,100k rows,1,6001,Lake Shore Blvd West at Mimico Ave,3755,Sheppard West Station at Bus Bay 7,A*,0.00788704200022039,4956,9.55523423730993,121
+100000,100k rows,2,8070,Bathurst St at Bannockburn Ave,1071,Ossington Ave at Churchill Ave,Dijkstra,0.002558249998401152,3102,11.408339296004545,138
+100000,100k rows,2,8070,Bathurst St at Bannockburn Ave,1071,Ossington Ave at Churchill Ave,A*,0.004826541000511497,3102,11.408339296004545,138
+100000,100k rows,3,7585,Neptune Dr at Bathurst St,6974,Ellesmere Rd at Gander Dr East Side,Dijkstra,0.005205624998779967,5897,15.37410750048764,125
+100000,100k rows,3,7585,Neptune Dr at Bathurst St,6974,Ellesmere Rd at Gander Dr East Side,A*,0.008627332998003112,5897,15.37410750048764,125
+100000,100k rows,4,11061,Eglinton Ave East at Markham Rd West Side,8799,Kingston Rd at Beechgrove Dr,Dijkstra,0.00014887500219629146,199,0.9274988738916158,28
+100000,100k rows,4,11061,Eglinton Ave East at Markham Rd West Side,8799,Kingston Rd at Beechgrove Dr,A*,0.0002505409975128714,199,0.9274988738916158,28
+100000,100k rows,5,6873,The Queensway at North Queen St East Side,4373,Doncaster Ave at Main St West Side,Dijkstra,0.004983791000995552,5955,15.269209007576261,155
+100000,100k rows,5,6873,The Queensway at North Queen St East Side,4373,Doncaster Ave at Main St West Side,A*,0.008406290999118937,5955,15.269209007576261,155
+100000,100k rows,6,4412,Eglinton Ave West at Oakwood Ave,7345,Finch Ave West at Chesswood Dr West Side,Dijkstra,0.006158666998089757,7064,10.019659927061266,96
+100000,100k rows,6,4412,Eglinton Ave West at Oakwood Ave,7345,Finch Ave West at Chesswood Dr West Side,A*,0.010284874999342719,7064,10.019659927061266,96
+100000,100k rows,7,4418,Eighth St at Lake Shore Blvd West North Side,18914,Kingston Rd at Scarborough Golf Club Rd West Side,Dijkstra,0.006296333001955645,7190,15.0911618050831,179
+100000,100k rows,7,4418,Eighth St at Lake Shore Blvd West North Side,18914,Kingston Rd at Scarborough Golf Club Rd West Side,A*,0.010432166000100551,7189,15.0911618050831,179
+100000,100k rows,8,10633,Yonge St at Queens Quay East North Side,6619,Pharmacy Ave at Alvinston Rd North Side,Dijkstra,0.004911125000944594,5847,10.524676561874701,107
+100000,100k rows,8,10633,Yonge St at Queens Quay East North Side,6619,Pharmacy Ave at Alvinston Rd North Side,A*,0.00839754200205789,5847,10.524676561874701,107
+250000,250k rows,1,7605,McNicoll Ave at Pharmacy Ave,5618,Park St at Atlee Ave,Dijkstra,0.00361825000072713,3028,7.757020142409187,100
+250000,250k rows,1,7605,McNicoll Ave at Pharmacy Ave,5618,Park St at Atlee Ave,A*,0.013353207999898586,3025,7.757020142409187,100
+250000,250k rows,2,18364,2155 Lake Shore Blvd West,3822,Lawrence West Station at Bus Bay 1,Dijkstra,0.0143091669997375,7344,5.337764862742645,107
+250000,250k rows,2,18364,2155 Lake Shore Blvd West,3822,Lawrence West Station at Bus Bay 1,A*,0.02531920800174703,7336,5.337764862742645,107
+250000,250k rows,3,7062,Danforth Ave at East Lynn Ave,1953,Warden Ave at Finch Ave East,Dijkstra,0.007957916001032572,3525,3.0938388192384316,66
+250000,250k rows,3,7062,Danforth Ave at East Lynn Ave,1953,Warden Ave at Finch Ave East,A*,0.008752749999985099,3523,3.0938388192384316,66
+250000,250k rows,4,9286,Meadowvale Rd at Sheppard Ave East,144,Davenport Rd at New St,Dijkstra,0.012683041997661348,9723,6.423822658571317,169
+250000,250k rows,4,9286,Meadowvale Rd at Sheppard Ave East,144,Davenport Rd at New St,A*,0.026006167001469294,9722,6.423822658571317,169
+250000,250k rows,5,1617,Woodbine Ave at Barker Ave South Side,5899,Midland Ave at Aylesworth Ave North Side,Dijkstra,0.0015859170016483404,1423,2.584251515680086,59
+250000,250k rows,5,1617,Woodbine Ave at Barker Ave South Side,5899,Midland Ave at Aylesworth Ave North Side,A*,0.0024165839968190994,1422,2.584251515680086,59
+250000,250k rows,6,10634,Sheppard Ave West at Hove St,9839,Steeles Ave West at Thurman Rd,Dijkstra,0.0006736670002283063,661,1.5306176496065567,55
+250000,250k rows,6,10634,Sheppard Ave West at Hove St,9839,Steeles Ave West at Thurman Rd,A*,0.001035375000355998,659,1.5306176496065567,55
+250000,250k rows,7,42543,Martin Grove Rd at Finch Ave West,7831,Martin Grove Rd at Silverstone Dr,Dijkstra,0.0004322500026319176,404,1.058622224575941,38
+250000,250k rows,7,42543,Martin Grove Rd at Finch Ave West,7831,Martin Grove Rd at Silverstone Dr,A*,0.0009214579986291938,404,1.058622224575941,38
+250000,250k rows,8,18915,Kingston Rd at Celeste Dr East Side - Guildwood GO Station,6356,Birchmount Rd at Sheppard Ave East,Dijkstra,0.011520000000018626,7250,3.611909033461469,74
+250000,250k rows,8,18915,Kingston Rd at Celeste Dr East Side - Guildwood GO Station,6356,Birchmount Rd at Sheppard Ave East,A*,0.01721120799993514,7245,3.611909033461469,74
+500000,500k rows,1,10175,Dundas St West at Chelsea Ave North Side,5590,Alness St at Flint Rd,Dijkstra,0.009957334001228446,6857,2.2415209451247313,98
+500000,500k rows,1,10175,Dundas St West at Chelsea Ave North Side,5590,Alness St at Flint Rd,A*,0.018401334000373026,6850,2.2415209451247313,98
+500000,500k rows,2,10097,Caledonia Rd at Rogers Rd,7782,Dupont St at Bedford Rd,Dijkstra,0.009519832998194033,7313,2.559762191423264,122
+500000,500k rows,2,10097,Caledonia Rd at Rogers Rd,7782,Dupont St at Bedford Rd,A*,0.014710084000398638,7302,2.559762191423264,122
+500000,500k rows,3,11222,9690 Markham Rd,9978,Bathurst St at Codsell Ave,Dijkstra,0.008067333001235966,7887,3.4968628776556265,143
+500000,500k rows,3,11222,9690 Markham Rd,9978,Bathurst St at Codsell Ave,A*,0.018515125000703847,7882,3.4968628776556265,143
+500000,500k rows,4,19754,Bloor St East at Yonge St East Side,10563,Glencairn Ave at Haven Rd East Side,Dijkstra,0.010620917000778718,9525,3.257691184701037,118
+500000,500k rows,4,19754,Bloor St East at Yonge St East Side,10563,Glencairn Ave at Haven Rd East Side,A*,0.0266373750018829,9524,3.257691184701037,118
+500000,500k rows,5,318,Kennedy Rd at Brigstock Rd,43170,Bermondsey Rd at Hollinger Rd,Dijkstra,0.005799208000098588,4676,1.5037961634078036,46
+500000,500k rows,5,318,Kennedy Rd at Brigstock Rd,43170,Bermondsey Rd at Hollinger Rd,A*,0.016120624997711275,4670,1.5037961634078036,46
+500000,500k rows,6,9725,6793-6823 Steeles Ave West,5414,3636 Weston Rd,Dijkstra,0.001445082998543512,753,0.6596229310994159,43
+500000,500k rows,6,9725,6793-6823 Steeles Ave West,5414,3636 Weston Rd,A*,0.0023198339986265637,747,0.6596229310994159,43
+500000,500k rows,7,34809,Mt Pleasant Rd at Eglinton Ave East,9176,York Mills Rd at Valentine Dr,Dijkstra,0.00704487500115647,3669,1.214680621158847,64
+500000,500k rows,7,34809,Mt Pleasant Rd at Eglinton Ave East,9176,York Mills Rd at Valentine Dr,A*,0.013120042000082321,3661,1.214680621158847,64
+500000,500k rows,8,3886,York Mills Station at Bus Bay 1,4512,Queens Quay Loop at Lower Spadina Ave,Dijkstra,0.006362250001984648,5196,1.4553461972462236,47
+500000,500k rows,8,3886,York Mills Station at Bus Bay 1,4512,Queens Quay Loop at Lower Spadina Ave,A*,0.012788208998244954,5180,1.4553461972462236,47

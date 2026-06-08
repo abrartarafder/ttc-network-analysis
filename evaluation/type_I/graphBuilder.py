@@ -18,9 +18,9 @@ Returns
 -------
 G : nx.DiGraph
     Full directed graph.  Each node has: name, lat, lon.
-    Each edge has: weight (1 / trip-frequency count).
-                   Lower weight = more trips = cheaper for Dijkstra.
-                   Dijkstra therefore favours well-served corridors.
+    Each edge has weight: 1 / trip-frequency count.
+    Lower weight = more trips = cheaper for Dijkstra.
+    Dijkstra therefore favours well-served corridors.
 giant : nx.DiGraph
     Subgraph induced by the largest weakly-connected component of G.
 

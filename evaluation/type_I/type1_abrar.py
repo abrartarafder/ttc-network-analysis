@@ -6,7 +6,7 @@ TTC stop network.  Graph construction is delegated to graph_builder.py
 so the same graph object can be shared with type1_routing.py.
 
   - networkx   (centrality metrics)
-  - pandas     (data wrangling + CSV output)
+  - pandas     (data wrangling + tabular summaries)
   - matplotlib (static visualisations)
 
 Expected folder structure (run from project root ttc-network-analysis/):
@@ -57,9 +57,6 @@ print()
 #                          High betweenness = "bottleneck" stop.
 #                          Approximated with k=200 samples for speed;
 #                          remove k= for the exact result in the final report.
-#
-# PageRank            — importance based on what important nodes link to.
-#                       Useful for identifying transit hubs.
 # ─────────────────────────────────────────────────────────────────────────────
 
 print("Step 4 — Computing centrality metrics …")
@@ -74,10 +71,6 @@ out_deg = dict(G.out_degree())
 nx.set_node_attributes(G, in_deg,  "in_degree")
 nx.set_node_attributes(G, out_deg, "out_degree")
 
-# PageRank (fast, direction-aware hub importance)
-pagerank = nx.pagerank(G, weight="weight")
-nx.set_node_attributes(G, pagerank, "pagerank")
-
 # Betweenness centrality — approximate for speed
 print("  (betweenness approximation with k=200 — remove k= for exact result) …")
 betweenness = nx.betweenness_centrality(G, k=200, normalized=True)
@@ -90,24 +83,19 @@ metrics_df = pd.DataFrame({
     "degree":      [G.degree(n)    for n in G.nodes()],
     "in_degree":   [G.in_degree(n) for n in G.nodes()],
     "out_degree":  [G.out_degree(n) for n in G.nodes()],
-    "pagerank":    [pagerank[n]    for n in G.nodes()],
     "betweenness": [betweenness[n] for n in G.nodes()],
 })
 
-top10 = metrics_df.sort_values("pagerank", ascending=False).head(10)
-print("\n  Top 10 stops by PageRank:")
-print(top10[["name", "degree", "pagerank", "betweenness"]].to_string(index=False))
-
-csv_path = f"{OUTPUT_DIR}/ttc_node_metrics.csv"
-metrics_df.to_csv(csv_path, index=False)
-print(f"\n  → Full metrics saved to {csv_path}")
+top10 = metrics_df.sort_values("betweenness", ascending=False).head(10)
+print("\n  Top 10 stops by Betweenness:")
+print(top10[["name", "degree", "betweenness"]].to_string(index=False))
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # STEP 5 — VISUALISE
 # ═══════════════════════════════════════════════════════════════════════════════
 #
-#   5a. Geographic layout — stops at real lat/lon, sized by PageRank.
+#   5a. Geographic layout — stops at real lat/lon, sized by degree centrality.
 #   5b. Degree distribution — linear + log-log histograms.
 #   5c. Top-N hub subgraph — spring layout of the highest-degree stops.
 # ─────────────────────────────────────────────────────────────────────────────
@@ -124,10 +112,10 @@ pos_geo = {
 }
 
 nodes_with_pos = list(pos_geo.keys())
-pr_values = np.array([pagerank[n] for n in nodes_with_pos])
+deg_values = np.array([deg_cent[n] for n in nodes_with_pos])
 
-node_sizes  = pr_values / pr_values.max() * 200 + 5
-node_colors = pr_values
+node_sizes  = deg_values / deg_values.max() * 200 + 5
+node_colors = deg_values
 
 nx.draw_networkx_nodes(
     G, pos_geo,
@@ -149,19 +137,19 @@ nx.draw_networkx_edges(
 )
 
 # Label only the top-20 hubs
-top20_ids    = metrics_df.nlargest(20, "pagerank")["stop_id"].tolist()
+top20_ids    = metrics_df.nlargest(20, "degree")["stop_id"].tolist()
 top20_pos    = {n: pos_geo[n] for n in top20_ids if n in pos_geo}
 top20_labels = {n: G.nodes[n]["name"] for n in top20_pos}
 nx.draw_networkx_labels(G, top20_pos, top20_labels, font_size=6, font_color="white", ax=ax)
 
 sm = plt.cm.ScalarMappable(
     cmap=cm.plasma,
-    norm=plt.Normalize(vmin=pr_values.min(), vmax=pr_values.max()),
+    norm=plt.Normalize(vmin=deg_values.min(), vmax=deg_values.max()),
 )
 sm.set_array([])
-plt.colorbar(sm, ax=ax, label="PageRank")
+plt.colorbar(sm, ax=ax, label="Degree Centrality")
 
-ax.set_title("TTC Stop Network — Geographic Layout\n(node size & colour = PageRank)", fontsize=14)
+ax.set_title("TTC Stop Network — Geographic Layout\n(node size & colour = Degree Centrality)", fontsize=14)
 ax.set_xlabel("Longitude")
 ax.set_ylabel("Latitude")
 plt.tight_layout()
@@ -204,7 +192,7 @@ pos_spring = nx.spring_layout(H, seed=42, k=0.8)
 
 h_degrees = dict(H.degree())
 h_sizes   = [h_degrees[n] * 30 for n in H.nodes()]
-h_colors  = [pagerank[n] for n in H.nodes()]
+h_colors  = [betweenness[n] for n in H.nodes()]
 
 fig, ax = plt.subplots(figsize=(14, 12))
 nx.draw_networkx_nodes(H, pos_spring, node_size=h_sizes, node_color=h_colors,
@@ -217,15 +205,15 @@ nx.draw_networkx_labels(H, pos_spring,
 sm2 = plt.cm.ScalarMappable(
     cmap=cm.viridis,
     norm=plt.Normalize(
-        vmin=min(pagerank[n] for n in H.nodes()),
-        vmax=max(pagerank[n] for n in H.nodes()),
+        vmin=min(betweenness[n] for n in H.nodes()),
+        vmax=max(betweenness[n] for n in H.nodes()),
     ),
 )
 sm2.set_array([])
-plt.colorbar(sm2, ax=ax, label="PageRank")
+plt.colorbar(sm2, ax=ax, label="Betweenness")
 
 ax.set_title(f"Top-{TOP_N} TTC Stops by Degree — Spring Layout\n"
-             "(node size = degree, colour = PageRank)", fontsize=13)
+             "(node size = degree, colour = Betweenness)", fontsize=13)
 ax.axis("off")
 plt.tight_layout()
 plt.savefig(f"{OUTPUT_DIR}/ttc_hub_subgraph.png", dpi=150)
@@ -293,7 +281,6 @@ except Exception as e:
 
 print("\n✓ All steps complete.")
 print("  Output files:")
-print(f"    {OUTPUT_DIR}/ttc_node_metrics.csv  — per-node centrality table")
 print(f"    {OUTPUT_DIR}/ttc_geo_layout.png    — geographic stop map")
 print(f"    {OUTPUT_DIR}/ttc_degree_dist.png   — degree distribution plots")
 print(f"    {OUTPUT_DIR}/ttc_hub_subgraph.png  — top-hub spring-layout subgraph")

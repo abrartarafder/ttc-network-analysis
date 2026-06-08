@@ -1,6 +1,0 @@
-rank,stop_id,name,pagerank,degree,in_degree,out_degree,betweenness
-1,416,Triton Rd at Brimley Rd,0.0006356381749898,12,6,6,0.2150143758473977
-2,18387,Weston Rd at St Clair Ave West,0.0005245749852427,5,3,2,0.0121422684106133
-3,1495,Keele St at Dundas St West South Side,0.0005127749161128,5,2,3,0.0219468442048744
-4,3777,Finch Station at Bus Bay 10,0.0005108617929245,3,2,1,0.0264040099185516
-5,6857,Triton Rd at Borough Dr,0.0005022261378204,19,6,13,0.1887380445439319

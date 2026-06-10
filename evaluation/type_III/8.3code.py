@@ -1,16 +1,4 @@
-"""TTC scalability experiment for section 8.3.
-
-This script measures how shortest-path routing behaves as the TTC graph grows
-from smaller GTFS samples to the current 500k-row baseline.  It reports:
-
-- graph size / complexity statistics
-- Dijkstra vs A* runtime
-- edges evaluated during search
-- path cost and hop count
-
-Outputs are written to:
-  outputs/8.3/
-"""
+"""TTC scalability experiment for section 8.3."""
 
 from __future__ import annotations
 

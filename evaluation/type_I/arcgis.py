@@ -7,19 +7,19 @@ stop_times = pd.read_csv(f"{DATA_DIR}/stop_times.txt", low_memory=False)
 trips = pd.read_csv(f"{DATA_DIR}/trips.txt", low_memory=False)
 routes = pd.read_csv(f"{DATA_DIR}/routes.txt", low_memory=False)
 
-# Clean column names
+# Clean column names.
 stops.columns = stops.columns.str.strip()
 stop_times.columns = stop_times.columns.str.strip()
 trips.columns = trips.columns.str.strip()
 routes.columns = routes.columns.str.strip()
 
-# Make IDs strings so merges work
+# Make IDs strings so merges work.
 stop_times["trip_id"] = stop_times["trip_id"].astype(str)
 trips["trip_id"] = trips["trip_id"].astype(str)
 trips["route_id"] = trips["route_id"].astype(str)
 routes["route_id"] = routes["route_id"].astype(str)
 
-# Merge route info into stop_times
+# Merge route info into stop_times.
 stop_times = stop_times.merge(
     trips[["trip_id", "route_id"]],
     on="trip_id",
@@ -32,7 +32,7 @@ stop_times = stop_times.merge(
     how="left"
 )
 
-# Pick one route type per stop
+# Pick one route type per stop.
 stop_routes = stop_times.groupby("stop_id").first().reset_index()
 
 arcgis_stops = stops.merge(

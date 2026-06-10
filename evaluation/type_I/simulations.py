@@ -1,24 +1,4 @@
-"""
-TTC Disruption Simulation
-================================
-1. Builds the TTC graph using graphBuilder.py.
-2. Picks one source and destination stop.
-3. Runs Dijkstra and A* with no disruption.
-4. Creates simple disruptions:
-   - delays: increase edge weights
-   - station closure: remove stops
-   - route interruption: remove edges
-5. Runs Dijkstra and A* again after each disruption.
-6. Creates a graph comparing no disruption vs disruption.
-
-Run from the project root:
-    python3 evaluation/type_I/simulations.py
-
-Outputs:
-    outputs/simulation_results.csv
-    outputs/simulation_baseline_comparison.png
-    outputs/simulation_maps/*.png
-"""
+"""Simulate TTC routing disruptions and compare Dijkstra and A*."""
 
 import math
 import os
@@ -67,10 +47,7 @@ def haversine_km(lat1, lon1, lat2, lon2):
 
 
 def astar_heuristic(graph, target):
-    """
-    A* needs a heuristic.
-    Here we use straight-line geographic distance to the destination.
-    """
+    """Use straight-line geographic distance as the A* heuristic."""
     def heuristic(node, goal):
         try:
             node_data = graph.nodes[node]
@@ -88,10 +65,7 @@ def astar_heuristic(graph, target):
 
 
 def make_weight_counter():
-    """
-    Count how many edges the algorithm checks.
-    This gives us the 'search work' value.
-    """
+    """Count how many edges the algorithm checks."""
     counter = {"edges_checked": 0}
 
     def weight_function(u, v, edge_data):
@@ -102,7 +76,7 @@ def make_weight_counter():
 
 
 def calculate_path_cost(graph, path):
-    """Add up all edge weights in a path."""
+    """Sum the weights along a path."""
     total = 0
     for i in range(len(path) - 1):
         current_stop = path[i]
@@ -112,7 +86,7 @@ def calculate_path_cost(graph, path):
 
 
 def run_dijkstra(graph, source, target):
-    """Run Dijkstra and return useful result information."""
+    """Run Dijkstra and return result information."""
     weight_function, counter = make_weight_counter()
 
     start_time = time.perf_counter()
@@ -131,7 +105,7 @@ def run_dijkstra(graph, source, target):
 
 
 def run_astar(graph, source, target):
-    """Run A* and return useful result information."""
+    """Run A* and return result information."""
     weight_function, counter = make_weight_counter()
 
     start_time = time.perf_counter()
@@ -177,7 +151,7 @@ def run_both_algorithms(graph, source, target):
 
 
 def choose_route(graph):
-    """Pick one source and destination that have a route between them."""
+    """Pick one source and destination that have a route."""
     nodes = list(graph.nodes())
 
     while True:
@@ -191,22 +165,19 @@ def choose_route(graph):
 
 
 def get_important_stops_on_route(graph, path, count):
-    """
-    Choose important stops from the selected route.
-    Important means the stop has many connections.
-    """
+    """Choose route stops with the most connections."""
     middle_stops = path[1:-1]
     ranked_stops = sorted(middle_stops, key=lambda stop: graph.degree(stop), reverse=True)
     return ranked_stops[:count]
 
 
 def stop_names(graph, stops):
-    """Convert stop ids into readable stop names."""
+    """Convert stop IDs into readable stop names."""
     return [graph.nodes[stop].get("name", str(stop)) for stop in stops]
 
 
 def edge_names(graph, edges):
-    """Convert route edges into readable stop-to-stop names."""
+    """Convert route edges into readable names."""
     readable_edges = []
     for start, end in edges:
         start_name = graph.nodes[start].get("name", str(start))
@@ -216,10 +187,7 @@ def edge_names(graph, edges):
 
 
 def create_delay_scenario(graph, baseline_path):
-    """
-    Delay scenario:
-    Increase edge weights around a few important stops.
-    """
+    """Increase edge weights around a few important stops."""
     delayed_graph = graph.copy()
     delayed_stops = get_important_stops_on_route(graph, baseline_path, NUM_DELAYED_STOPS)
 
@@ -235,10 +203,7 @@ def create_delay_scenario(graph, baseline_path):
 
 
 def create_station_closure_scenario(graph, baseline_path):
-    """
-    Station closure scenario:
-    Remove a few important stops from the graph.
-    """
+    """Remove a few important stops from the graph."""
     closed_graph = graph.copy()
     closed_stops = get_important_stops_on_route(graph, baseline_path, NUM_CLOSED_STOPS)
     closed_graph.remove_nodes_from(closed_stops)
@@ -247,10 +212,7 @@ def create_station_closure_scenario(graph, baseline_path):
 
 
 def create_route_interruption_scenario(graph, baseline_path):
-    """
-    Route interruption scenario:
-    Remove a few edges from the middle of the original route.
-    """
+    """Remove a few edges from the middle of the route."""
     interrupted_graph = graph.copy()
     route_edges = list(zip(baseline_path, baseline_path[1:]))
 
@@ -339,7 +301,7 @@ def draw_route(ax, graph, positions, path, color, label, width):
 
 
 def stop_label(graph, stop, label):
-    """Create a map label with stop name/address and coordinates."""
+    """Create a map label with stop details and coordinates."""
     stop_data = graph.nodes[stop]
     name = stop_data.get("name", stop)
     lat = stop_data.get("lat", 0)
@@ -359,7 +321,7 @@ def plot_route_map(
     affected_stops,
     affected_edges,
 ):
-    """Make one simple route map for one algorithm and one disruption scenario."""
+    """Make one route map for one algorithm and scenario."""
     positions = get_positions(graph)
 
     fig, ax = plt.subplots(figsize=(12, 10))
@@ -437,7 +399,7 @@ def plot_scenario_maps(
     affected_stops,
     affected_edges,
 ):
-    """Create separate Dijkstra and A* maps for one disruption scenario."""
+    """Create separate Dijkstra and A* maps for one scenario."""
     baseline_path = next(
         result["path"]
         for result in baseline_results
@@ -460,15 +422,7 @@ def plot_scenario_maps(
 
 
 def plot_algorithm_comparison(results_df):
-    """
-    Create the main comparison image.
-
-    For every disruption scenario, it compares:
-    - Dijkstra with no disruption
-    - Dijkstra with disruption
-    - A* with no disruption
-    - A* with disruption
-    """
+    """Create the main comparison image."""
     scenarios = [
         scenario
         for scenario in results_df["scenario"].unique()

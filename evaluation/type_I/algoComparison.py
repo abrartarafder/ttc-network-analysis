@@ -1,31 +1,4 @@
-"""
-EECS4414 — TTC Shortest-Path Routing: Dijkstra vs A*
-======================================================
-Compares Dijkstra's algorithm and A* search on the TTC stop network.
-Graph construction is delegated to graph_builder.py so the same graph
-object is shared with type1_abrar.py.
-
-Both algorithms are applied to several randomly-selected (source, destination)
-pairs drawn from the giant connected component of the graph.  For each trial
-the script records:
-  - runtime (seconds)
-  - edges evaluated during the search
-  - total path cost (sum of edge weights along the returned path)
-  - path length (number of hops)
-
-A* uses the Haversine geographic distance between stops as its admissible
-heuristic — this never overestimates the true cost, so A* is guaranteed to
-return the same optimal path as Dijkstra.
-
-Run from the project root (ttc-network-analysis/):
-  python evaluation/type_I/type1_routing.py
-
-Outputs
--------
-  outputs/routing_comparison.csv   — per-trial results table
-  outputs/routing_summary.png      — bar-chart summary (runtime & nodes)
-  outputs/routing_paths.png        — sample path visualised on the map
-"""
+"""Compare Dijkstra and A* on the TTC stop network."""
 
 import math
 import os
@@ -44,17 +17,15 @@ import pandas as pd
 matplotlib.use("Agg")
 warnings.filterwarnings("ignore")
 
-# ── Shared graph ──────────────────────────────────────────────────────────────
+# Shared graph.
 import sys, os
 sys.path.insert(0, os.path.dirname(__file__))
 from graphBuilder import build_graph
 
-# ──────────────────────────────────────────────────────────────────────────────
-# CONFIGURATION
-# ──────────────────────────────────────────────────────────────────────────────
+# Configuration.
 
-NUM_TRIALS  = 10    # number of random source→destination pairs to test
-RANDOM_SEED = 42    # reproducibility
+NUM_TRIALS  = 10    # Random source-to-destination pairs.
+RANDOM_SEED = 42    # Reproducibility.
 OUTPUT_DIR  = "outputs"
 
 random.seed(RANDOM_SEED)
@@ -70,13 +41,7 @@ giant_nodes = list(giant.nodes())
 print()
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# HEURISTIC FOR A*
-# ══════════════════════════════════════════════════════════════════════════════
-# Haversine distance (km) between two stops.
-# Edge weights are trip-frequency counts, not kilometres, so the heuristic
-# underestimates real cost — making it admissible and guaranteeing optimality.
-# ──────────────────────────────────────────────────────────────────────────────
+# A* heuristic.
 
 def haversine_km(lat1, lon1, lat2, lon2):
     """Great-circle distance in kilometres."""
@@ -90,46 +55,17 @@ def haversine_km(lat1, lon1, lat2, lon2):
 
 
 def astar_heuristic(u, v):
-    """
-    Admissible heuristic: scaled geographic distance.
-
-    Edge weights are now 1/trip_count (small fractional values, typically
-    0.01-1.0).  The raw Haversine distance in km is much larger than any
-    single edge weight, which would make the heuristic inadmissible and
-    cause A* to miss the optimal path.
-
-    Dividing by 10,000 keeps the heuristic below the smallest possible
-    edge weight (1/1 = 1.0 for a single-trip edge) while still providing
-    meaningful directional guidance toward the destination.
-
-    Returns 0 if coordinate data is unavailable (safe fallback).
-    """
+    """Scaled geographic distance that stays admissible."""
     try:
         ud, vd = giant.nodes[u], giant.nodes[v]
         km = haversine_km(ud["lat"], ud["lon"], vd["lat"], vd["lon"])
         return km / 10000
     except (KeyError, TypeError):
         return 0.0
-
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# EDGE-VISIT COUNTER
-# ══════════════════════════════════════════════════════════════════════════════
-# NetworkX's Dijkstra/A* internals access the graph at the C level, so a
-# Python proxy around the graph object is never actually called.
-#
-# Instead we pass a *weight function* — both nx.dijkstra_path and nx.astar_path
-# accept  weight=callable(u, v, edge_data) -> float  in place of a string key.
-# Every time the algorithm evaluates an edge it calls our function, so counting
-# those calls gives a reliable measure of edges (and therefore nodes) examined.
-# ──────────────────────────────────────────────────────────────────────────────
+# Edge-visit counter.
 
 def make_weight_fn():
-    """
-    Returns (weight_fn, counter).
-    weight_fn(u, v, data) returns the edge weight and increments counter['n'].
-    """
+    """Return a weight function that counts edge checks."""
     counter = {"n": 0}
 
     def weight_fn(u, v, data):
@@ -139,15 +75,10 @@ def make_weight_fn():
     return weight_fn, counter
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Algorithm runners
-# ──────────────────────────────────────────────────────────────────────────────
+# Algorithm runners.
 
 def run_dijkstra(graph, source, target):
-    """
-    Run nx.dijkstra_path with an instrumented weight function.
-    Returns (path, path_cost, edges_evaluated, elapsed_seconds).
-    """
+    """Run Dijkstra and return path metrics."""
     wfn, ctr = make_weight_fn()
     t0       = time.perf_counter()
     path     = nx.dijkstra_path(graph, source, target, weight=wfn)
@@ -157,10 +88,7 @@ def run_dijkstra(graph, source, target):
 
 
 def run_astar(graph, source, target):
-    """
-    Run nx.astar_path with an instrumented weight function.
-    Returns (path, path_cost, edges_evaluated, elapsed_seconds).
-    """
+    """Run A* and return path metrics."""
     wfn, ctr = make_weight_fn()
     t0       = time.perf_counter()
     path     = nx.astar_path(graph, source, target,
@@ -173,13 +101,11 @@ def run_astar(graph, source, target):
     return path, cost, ctr["n"], elapsed
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# RUN TRIALS
-# ══════════════════════════════════════════════════════════════════════════════
+# Run trials.
 
 print(f"Step 4 — Running {NUM_TRIALS} routing trials …\n")
 
-# Sample reachable pairs
+# Sample reachable pairs.
 trial_pairs, attempts = [], 0
 while len(trial_pairs) < NUM_TRIALS and attempts < NUM_TRIALS * 20:
     attempts += 1
@@ -190,7 +116,7 @@ while len(trial_pairs) < NUM_TRIALS and attempts < NUM_TRIALS * 20:
 if len(trial_pairs) < NUM_TRIALS:
     print(f"  Warning: only found {len(trial_pairs)} reachable pairs.\n")
 
-# Print header
+# Print header.
 header = (
     f"{'#':<4} {'Algorithm':<10} {'Runtime (s)':<13} "
     f"{'Edges Eval.':<12} {'Path Cost':<12} {'Hops':<6} "
@@ -239,9 +165,7 @@ for i, (src, dst) in enumerate(trial_pairs, 1):
 print()
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# SAVE CSV
-# ══════════════════════════════════════════════════════════════════════════════
+# Save CSV.
 
 results_df = pd.DataFrame(results)
 csv_path   = f"{OUTPUT_DIR}/routing_comparison.csv"
@@ -249,9 +173,7 @@ results_df.to_csv(csv_path, index=False)
 print(f"  → Results saved to {csv_path}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# SUMMARY TABLE  (matches Table 3 format in the report)
-# ══════════════════════════════════════════════════════════════════════════════
+# Summary table.
 
 summary = (
     results_df
@@ -293,9 +215,7 @@ print(f"  Trials where both algorithms returned identical path cost: "
       f"{same_count}/{len(trial_pairs)}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# VISUALISATIONS
-# ══════════════════════════════════════════════════════════════════════════════
+# Visualisations.
 
 print("\nStep 5 — Generating plots …")
 
@@ -305,7 +225,7 @@ trials  = dijk_df["trial"].values
 x       = np.arange(len(trials))
 bar_w   = 0.35
 
-# ── 5a. Runtime and nodes-explored bar charts ─────────────────────────────────
+# 5a. Runtime and search effort charts.
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 fig.suptitle("Dijkstra vs A* — TTC Network Routing Comparison",
              fontsize=14, fontweight="bold")
@@ -338,11 +258,11 @@ plt.close()
 print(f"  → {OUTPUT_DIR}/routing_summary.png saved")
 
 
-# ── 5b. One map per trial saved into outputs/routing_paths/ ──────────────────
+# 5b. One map per trial.
 PATHS_DIR = f"{OUTPUT_DIR}/routing_paths"
 os.makedirs(PATHS_DIR, exist_ok=True)
 
-# Pre-compute geographic positions once (reused for every trial)
+# Pre-compute geographic positions once.
 pos_geo = {
     n: (giant.nodes[n]["lon"], giant.nodes[n]["lat"])
     for n in giant.nodes()
@@ -371,7 +291,7 @@ for trial_num, (src_id, dst_id) in enumerate(trial_pairs, 1):
 
     fig, ax = plt.subplots(figsize=(12, 10))
 
-    # Background: all nodes faint
+    # Background nodes.
     nx.draw_networkx_nodes(
         giant, pos_geo,
         nodelist=list(pos_geo.keys()),
@@ -411,9 +331,7 @@ for trial_num, (src_id, dst_id) in enumerate(trial_pairs, 1):
 
 print(f"  All {len(trial_pairs)} trial maps saved to {PATHS_DIR}/")
 
-# ══════════════════════════════════════════════════════════════════════════════
-# DONE
-# ══════════════════════════════════════════════════════════════════════════════
+# Done.
 
 print("\n✓ Routing analysis complete.")
 print("  Output files:")

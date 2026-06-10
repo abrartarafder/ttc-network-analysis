@@ -1,16 +1,4 @@
-"""TTC structure-efficiency experiment for section 8.4.
-
-This script compares how Dijkstra performs on different graph structures that
-all come from the same TTC GTFS data:
-
-- directed stop-level graph
-- largest weakly connected component
-- undirected version of the giant component
-- hub-focused subgraph built from the highest-degree stops
-
-Outputs are written to:
-  outputs/8.4/
-"""
+"""TTC structure-efficiency experiment for section 8.4."""
 
 from __future__ import annotations
 

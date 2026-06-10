@@ -1,38 +1,4 @@
-"""
-EECS4414 — TTC Edge-Weight Comparison
-======================================
-Compares how different edge-weight definitions change routing behaviour
-on the TTC stop network.  The same Dijkstra shortest-path algorithm is
-applied under three weight schemes so that only the cost definition
-changes — isolating the effect of the weight method on the chosen path.
-
-Three edge-weight methods
---------------------------
-1. Trip Frequency  — weight = number of trips using that stop-to-stop leg.
-                     Higher weight = busier connection.  Dijkstra favours
-                     high-frequency (well-served) corridors.
-
-2. Travel Time     — weight = scheduled travel time in seconds between
-                     consecutive stops (from departure_time columns).
-                     Minimises actual journey duration.
-
-3. Hop Count       — weight = 1 for every edge (unweighted).
-                     Minimises the number of stops regardless of frequency
-                     or time.  Equivalent to BFS shortest path.
-
-For each weight method, Dijkstra is run on NUM_TRIALS random
-source→destination pairs (same pairs across all methods so results are
-directly comparable).  The script records path cost, hops, and runtime,
-then produces:
-  - a summary table printed to the console
-  - outputs/weight_comparison.csv       — per-trial results
-  - outputs/weight_summary.png          — grouped bar charts
-  - outputs/weight_paths/trial_XX.png   — one map per trial showing all
-                                          three paths overlaid
-
-Run from the project root (ttc-network-analysis/):
-  python evaluation/type_I/type1_weights.py
-"""
+"""Compare TTC routing under three edge-weight methods."""
 
 import csv as _csv
 import math
@@ -51,17 +17,15 @@ import pandas as pd
 matplotlib.use("Agg")
 warnings.filterwarnings("ignore")
 
-# ── Shared graph ──────────────────────────────────────────────────────────────
+# Shared graph.
 import sys
 sys.path.insert(0, os.path.dirname(__file__))
 from graphBuilder import build_graph
 
-# ──────────────────────────────────────────────────────────────────────────────
-# CONFIGURATION
-# ──────────────────────────────────────────────────────────────────────────────
+# Configuration.
 
 NUM_TRIALS   = 10
-RANDOM_SEED  = 42       # same seed as type1_routing.py → same stop pairs
+RANDOM_SEED  = 42       # Same stop pairs as the routing script.
 SAMPLE_ROWS  = 500_000
 OUTPUT_DIR   = "outputs"
 PATHS_DIR    = f"{OUTPUT_DIR}/weight_paths"
@@ -75,9 +39,7 @@ print("=" * 62)
 print("  EECS4414 — TTC Edge-Weight Comparison")
 print("=" * 62)
 
-# ══════════════════════════════════════════════════════════════════════════════
-# STEP 1 — BASE GRAPH  (trip-frequency weights, from graphBuilder)
-# ══════════════════════════════════════════════════════════════════════════════
+# Step 1: base graph.
 
 print("\nStep 1 — Building base graph …")
 G, giant = build_graph()
@@ -85,9 +47,7 @@ giant_nodes = list(giant.nodes())
 print()
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# TABLE 1 — INITIAL TTC GRAPH STATISTICS
-# ══════════════════════════════════════════════════════════════════════════════
+# Table 1: initial TTC graph statistics.
 
 print("─" * 54)
 print("  Table 1: Initial TTC Graph Statistics")
@@ -109,18 +69,7 @@ print(t1_fmt.format(
 print()
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# TABLE 2 — NETWORK PROPERTY RESULTS
-# ══════════════════════════════════════════════════════════════════════════════
-# Computed on the giant component (the largest connected subgraph).
-#
-# Graph Density              — fraction of possible edges that exist.
-# Average Clustering Coeff.  — how often a stop's neighbours are also connected
-#                              to each other.  Computed on undirected view.
-# Average Shortest Path Len. — mean hops across sampled node pairs (k=300
-#                              sample used; exact would be too slow).
-# Connected Components       — weakly connected components in the full graph G.
-# ─────────────────────────────────────────────────────────────────────────────
+# Table 2: network property results.
 
 print("Computing Table 2 network properties …")
 
@@ -129,7 +78,7 @@ density = nx.density(giant)
 giant_und = giant.to_undirected()
 avg_clustering = nx.average_clustering(giant_und)
 
-print("  (sampling shortest path length — may take a moment) …")
+print("  (sampling shortest path length) …")
 sample_nodes_t2 = random.sample(giant_nodes, min(300, len(giant_nodes)))
 path_lengths = []
 for src in sample_nodes_t2:
@@ -156,19 +105,13 @@ print("  (Properties computed on giant component unless noted)")
 print()
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# STEP 2 — BUILD TRAVEL-TIME WEIGHTS
-# ══════════════════════════════════════════════════════════════════════════════
-# Parse departure_time from stop_times to compute seconds between consecutive
-# stops on the same trip.  Where multiple trips share the same edge we take
-# the median travel time (robust to outliers from express / overnight trips).
-# ──────────────────────────────────────────────────────────────────────────────
+# Step 2: build travel-time weights.
 
 print("Step 2 — Computing travel-time edge weights …")
 
 
 def time_to_seconds(t: str) -> int:
-    """Convert 'HH:MM:SS' to total seconds.  Handles hour > 23 (overnight)."""
+    """Convert 'HH:MM:SS' to total seconds."""
     try:
         h, m, s = t.strip().split(":")
         return int(h) * 3600 + int(m) * 60 + int(s)
@@ -212,12 +155,12 @@ st["next_dep_sec"] = st.groupby("trip_id")["dep_sec"].shift(-1)
 st = st.dropna(subset=["next_stop", "dep_sec", "next_dep_sec"])
 st["travel_sec"] = st["next_dep_sec"] - st["dep_sec"]
 
-# Drop negative/zero times (data artefacts at trip boundaries)
+# Drop negative or zero times.
 st = st[st["travel_sec"] > 0]
 st["stop_id"]   = st["stop_id"].astype(int)
 st["next_stop"] = st["next_stop"].astype(int)
 
-# Median travel time per directed edge
+# Median travel time per directed edge.
 time_weights = (
     st.groupby(["stop_id", "next_stop"])["travel_sec"]
     .median()
@@ -225,31 +168,26 @@ time_weights = (
 )
 print(f"  [weights] {len(time_weights):,} edges with travel-time data")
 
-# Build a lookup dict: (u, v) → median travel seconds
+# Build a lookup dict for median travel seconds.
 time_weight_map = {
     (int(r.stop_id), int(r.next_stop)): r.travel_time
     for r in time_weights.itertuples()
 }
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# STEP 3 — ATTACH ALL WEIGHTS TO THE GIANT COMPONENT
-# ══════════════════════════════════════════════════════════════════════════════
-# We add travel_time and hop attributes alongside the existing weight
-# (trip frequency) so a single graph object supports all three schemes.
-# ──────────────────────────────────────────────────────────────────────────────
+# Step 3: attach all weights to the giant component.
 
 print("\nStep 3 — Attaching weight attributes to giant component …")
 
 missing_time = 0
 for u, v, data in giant.edges(data=True):
-    # Travel time (fall back to median network travel time if missing)
+    # Travel time fallback.
     tt = time_weight_map.get((u, v))
     if tt is None or tt <= 0:
         missing_time += 1
-        tt = 90   # ~90 s fallback ≈ median TTC stop-to-stop time
+        tt = 90   # Fallback travel time.
     data["travel_time"] = tt
-    # Hop count — always 1
+    # Hop count.
     data["hop"] = 1
 
 pct_missing = 100 * missing_time / giant.number_of_edges()
@@ -257,14 +195,12 @@ print(f"  Travel-time fallback applied to {missing_time:,} edges "
       f"({pct_missing:.1f}% of {giant.number_of_edges():,})")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# STEP 4 — WEIGHT SCHEMES
-# ══════════════════════════════════════════════════════════════════════════════
+# Step 4: weight schemes.
 
 WEIGHT_SCHEMES = {
-    "Trip Frequency": "weight",       # existing attr from graphBuilder
-    "Travel Time":    "travel_time",  # seconds between stops
-    "Hop Count":      "hop",          # always 1
+    "Trip Frequency": "weight",      # Existing graphBuilder weight.
+    "Travel Time":    "travel_time", # Seconds between stops.
+    "Hop Count":      "hop",         # Always 1.
 }
 
 SCHEME_COLORS = {
@@ -274,9 +210,7 @@ SCHEME_COLORS = {
 }
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# STEP 5 — SAMPLE TRIAL PAIRS  (same seed → same pairs as type1_routing.py)
-# ══════════════════════════════════════════════════════════════════════════════
+# Step 5: sample trial pairs.
 
 print(f"\nStep 4 — Sampling {NUM_TRIALS} reachable trial pairs …")
 
@@ -290,9 +224,7 @@ while len(trial_pairs) < NUM_TRIALS and attempts < NUM_TRIALS * 20:
 print(f"  {len(trial_pairs)} pairs selected\n")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# STEP 6 — RUN DIJKSTRA UNDER EACH WEIGHT SCHEME
-# ══════════════════════════════════════════════════════════════════════════════
+# Step 6: run Dijkstra under each weight scheme.
 
 print("Step 5 — Running Dijkstra under each weight scheme …\n")
 
@@ -341,11 +273,9 @@ for i, (src, dst) in enumerate(trial_pairs, 1):
         except (nx.NetworkXNoPath, nx.NodeNotFound) as e:
             print(f"  Trial {i} / {scheme_name} skipped: {e}")
 
-    print()   # blank line between trials
+    print()
 
-# ══════════════════════════════════════════════════════════════════════════════
-# STEP 7 — SAVE CSV
-# ══════════════════════════════════════════════════════════════════════════════
+# Step 7: save CSV.
 
 results_df = pd.DataFrame(results)
 csv_path   = f"{OUTPUT_DIR}/weight_comparison.csv"
@@ -353,9 +283,7 @@ results_df.to_csv(csv_path, index=False)
 print(f"  → Results saved to {csv_path}\n")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# STEP 8 — SUMMARY TABLE
-# ══════════════════════════════════════════════════════════════════════════════
+# Step 8: summary table.
 
 summary = (
     results_df
@@ -365,7 +293,7 @@ summary = (
         avg_path_cost  =("path_cost",  "mean"),
         avg_hops       =("hops",       "mean"),
     )
-    .reindex(list(WEIGHT_SCHEMES.keys()))   # consistent order
+    .reindex(list(WEIGHT_SCHEMES.keys()))   # Keep a stable order.
     .reset_index()
 )
 
@@ -391,7 +319,7 @@ for _, row in summary.iterrows():
     ))
 print()
 
-# ── Path agreement: how often do methods choose the same route? ───────────────
+# Path agreement.
 print("  Path agreement across weight methods (same hops = same path length):")
 for i in range(1, len(trial_pairs) + 1):
     trial_rows = results_df[results_df["trial"] == i]
@@ -403,13 +331,11 @@ for i in range(1, len(trial_pairs) + 1):
 print()
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# STEP 9 — VISUALISATIONS
-# ══════════════════════════════════════════════════════════════════════════════
+# Step 9: visualisations.
 
 print("Step 6 — Generating plots …")
 
-# ── 9a. Grouped bar charts: hops and runtime per trial ────────────────────────
+# 9a. Grouped bar charts.
 schemes = list(WEIGHT_SCHEMES.keys())
 n_schemes = len(schemes)
 x = np.arange(len(trial_pairs))
@@ -421,7 +347,7 @@ fig.suptitle("Dijkstra Under Different Edge-Weight Methods — TTC Network",
 
 for idx, scheme in enumerate(schemes):
     sub  = results_df[results_df["weight_method"] == scheme]
-    offs = (idx - 1) * bar_w   # centre the group around each trial tick
+    offs = (idx - 1) * bar_w   # Center the group on each tick.
 
     axes[0].bar(x + offs, sub["hops"].values,      bar_w,
                 label=scheme, color=SCHEME_COLORS[scheme])
@@ -446,7 +372,7 @@ plt.close()
 print(f"  → {OUTPUT_DIR}/weight_summary.png saved")
 
 
-# ── 9b. One map per trial with all three paths overlaid ──────────────────────
+# 9b. One map per trial.
 pos_geo = {
     n: (giant.nodes[n]["lon"], giant.nodes[n]["lat"])
     for n in giant.nodes()
@@ -475,20 +401,20 @@ for trial_num, (src_id, dst_id) in enumerate(trial_pairs, 1):
 
     fig, ax = plt.subplots(figsize=(12, 10))
 
-    # Background nodes
+    # Background nodes.
     nx.draw_networkx_nodes(
         giant, pos_geo,
         nodelist=list(pos_geo.keys()),
         node_size=2, node_color="#cccccc", alpha=0.35, ax=ax,
     )
 
-    # Draw each scheme's path (thicker for frequency, thinner for others)
+    # Draw each scheme's path.
     line_widths = {"Trip Frequency": 3.5, "Travel Time": 2.5, "Hop Count": 1.5}
     for scheme, path in paths.items():
         draw_path_on_ax(ax, path, SCHEME_COLORS[scheme],
                         lw=line_widths[scheme])
 
-    # Source / destination labels
+    # Source and destination labels.
     for nid, label, color in [(src_id, "SOURCE", "green"), (dst_id, "DEST", "red")]:
         if nid in pos_geo:
             ax.annotate(
@@ -502,7 +428,7 @@ for trial_num, (src_id, dst_id) in enumerate(trial_pairs, 1):
     ]
     ax.legend(handles=legend_patches, loc="lower right", fontsize=9)
 
-    # Per-scheme hop count in the title
+    # Per-scheme hop count.
     hop_info = "   |   ".join(
         f"{s}: {paths[s] and len(paths[s])-1} hops"
         for s in schemes if s in paths
@@ -526,9 +452,7 @@ for trial_num, (src_id, dst_id) in enumerate(trial_pairs, 1):
 print(f"  All {len(trial_pairs)} trial maps saved to {PATHS_DIR}/")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# DONE
-# ══════════════════════════════════════════════════════════════════════════════
+# Done.
 
 print("\n✓ Weight comparison complete.")
 print("  Output files:")

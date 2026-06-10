@@ -1,18 +1,4 @@
-"""
-TTC PageRank Analysis
-=====================
-Dedicated PageRank workflow for the TTC stop network.
-
-This script is the single source of truth for:
-  - PageRank computation
-  - per-stop metrics table
-  - top stops by PageRank
-  - station-level hub PageRank summary
-  - PageRank-specific visualizations
-
-Run from the project root:
-  python evaluation/type_I/pagerank.py
-"""
+"""Dedicated PageRank workflow for the TTC stop network."""
 
 from __future__ import annotations
 

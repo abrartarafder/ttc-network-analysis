@@ -1,24 +1,4 @@
-"""
-TTC Transit Network: Metrics & Visualisation
-=========================================================
-Computes centrality metrics and produces static visualisations for the
-TTC stop network.  Graph construction is delegated to graph_builder.py
-so the same graph object can be shared with type1_routing.py.
-
-  - networkx   (centrality metrics)
-  - pandas     (data wrangling + tabular summaries)
-  - matplotlib (static visualisations)
-
-Expected folder structure (run from project root ttc-network-analysis/):
-  dataset/
-    completegtfs/   OR   Complete GTFS/
-      stops.csv / stops.txt
-      stop_times.csv
-    disruptions/
-      subway/subway_data.csv
-
-Run:  python evaluation/type_I/type1_abrar.py
-"""
+"""Compute TTC centrality metrics and save static visualisations."""
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -28,9 +8,9 @@ import pandas as pd
 import networkx as nx
 import os
 
-matplotlib.use("Agg")   # headless — swap to "TkAgg" for interactive use
+matplotlib.use("Agg")   # Headless backend.
 
-# ── Shared graph ──────────────────────────────────────────────────────────────
+# Shared graph.
 import sys, os
 sys.path.insert(0, os.path.dirname(__file__))
 from graphBuilder import build_graph
@@ -46,37 +26,26 @@ G, giant = build_graph()
 print()
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# STEP 4 — COMPUTE NETWORK METRICS
-# ═══════════════════════════════════════════════════════════════════════════════
-#
-# degree_centrality   — fraction of other nodes a node is connected to.
-#                       High degree = major interchange stop.
-#
-# betweenness_centrality — how often a node lies on shortest paths.
-#                          High betweenness = "bottleneck" stop.
-#                          Approximated with k=200 samples for speed;
-#                          remove k= for the exact result in the final report.
-# ─────────────────────────────────────────────────────────────────────────────
+# Step 4: compute network metrics.
 
 print("Step 4 — Computing centrality metrics …")
 
-# Degree centrality (fast)
+# Degree centrality.
 deg_cent = nx.degree_centrality(G)
 nx.set_node_attributes(G, deg_cent, "degree_centrality")
 
-# In-degree and out-degree (directional breakdown)
+# In-degree and out-degree.
 in_deg  = dict(G.in_degree())
 out_deg = dict(G.out_degree())
 nx.set_node_attributes(G, in_deg,  "in_degree")
 nx.set_node_attributes(G, out_deg, "out_degree")
 
-# Betweenness centrality — approximate for speed
+# Betweenness centrality (approximate).
 print("  (betweenness approximation with k=200 — remove k= for exact result) …")
 betweenness = nx.betweenness_centrality(G, k=200, normalized=True)
 nx.set_node_attributes(G, betweenness, "betweenness")
 
-# ── Summary table ─────────────────────────────────────────────────────────────
+# Summary table.
 metrics_df = pd.DataFrame({
     "stop_id":     list(G.nodes()),
     "name":        [G.nodes[n].get("name", "") for n in G.nodes()],
@@ -91,18 +60,11 @@ print("\n  Top 10 stops by Betweenness:")
 print(top10[["name", "degree", "betweenness"]].to_string(index=False))
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# STEP 5 — VISUALISE
-# ═══════════════════════════════════════════════════════════════════════════════
-#
-#   5a. Geographic layout — stops at real lat/lon, sized by degree centrality.
-#   5b. Degree distribution — linear + log-log histograms.
-#   5c. Top-N hub subgraph — spring layout of the highest-degree stops.
-# ─────────────────────────────────────────────────────────────────────────────
+# Step 5: visualise the network.
 
 print("\nStep 5 — Plotting …")
 
-# ── 5a. Geographic layout ─────────────────────────────────────────────────────
+# 5a. Geographic layout.
 fig, ax = plt.subplots(figsize=(14, 12))
 
 pos_geo = {
@@ -136,7 +98,7 @@ nx.draw_networkx_edges(
     ax=ax,
 )
 
-# Label only the top-20 hubs
+# Label the top 20 hubs.
 top20_ids    = metrics_df.nlargest(20, "degree")["stop_id"].tolist()
 top20_pos    = {n: pos_geo[n] for n in top20_ids if n in pos_geo}
 top20_labels = {n: G.nodes[n]["name"] for n in top20_pos}
@@ -158,7 +120,7 @@ plt.close()
 print(f"  → {OUTPUT_DIR}/ttc_geo_layout.png saved")
 
 
-# ── 5b. Degree distribution ───────────────────────────────────────────────────
+# 5b. Degree distribution.
 degrees = [d for _, d in G.degree() if d > 0]
 
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))
@@ -183,8 +145,8 @@ plt.close()
 print(f"  → {OUTPUT_DIR}/ttc_degree_dist.png saved")
 
 
-# ── 5c. Top-hub subgraph ──────────────────────────────────────────────────────
-TOP_N = 80   # increase for final report
+# 5c. Top-hub subgraph.
+TOP_N = 80   # Hub subgraph size.
 
 top_nodes  = metrics_df.nlargest(TOP_N, "degree")["stop_id"].tolist()
 H          = G.subgraph(top_nodes).copy()
@@ -221,9 +183,7 @@ plt.close()
 print(f"  → {OUTPUT_DIR}/ttc_hub_subgraph.png saved")
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# STEP 6 — CONNECTED COMPONENTS & ROBUSTNESS
-# ═══════════════════════════════════════════════════════════════════════════════
+# Step 6: connected components and robustness.
 
 print("\nStep 6 — Connected components …")
 
@@ -236,9 +196,7 @@ print(f"  Giant component             : {giant.number_of_nodes():,} nodes, "
       f"{giant.number_of_edges():,} edges")
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# STEP 7 — ENRICH WITH DISRUPTION DATA
-# ═══════════════════════════════════════════════════════════════════════════════
+# Step 7: enrich with disruption data.
 
 print("\nStep 7 — Loading subway disruptions …")
 
@@ -275,9 +233,7 @@ except Exception as e:
     print(f"  (Skipping disruption enrichment — {e})")
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# DONE
-# ═══════════════════════════════════════════════════════════════════════════════
+# Done.
 
 print("\n✓ All steps complete.")
 print("  Output files:")

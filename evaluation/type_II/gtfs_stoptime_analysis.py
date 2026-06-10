@@ -10,9 +10,7 @@ OUT = "./evaluation/type_II/Thor_Scripts_Results"
 os.makedirs(OUT, exist_ok=True)
 
 
-# -----------------------------
-# Load GTFS data
-# -----------------------------
+# Load GTFS data.
 
 print("Loading trips and stops...")
 
@@ -26,9 +24,7 @@ stops = pd.read_csv(
 )
 
 
-# -----------------------------
-# Clean station names / merge bus bays
-# -----------------------------
+# Clean station names and merge bus bays.
 
 major_hubs = [
     "Kennedy",
@@ -69,14 +65,11 @@ def clean_station(name):
 stops["clean_stop_name"] = stops["stop_name"].apply(clean_station)
 
 
-# -----------------------------
-# Pick one trip per route/direction
-# -----------------------------
+# Pick one trip per route/direction.
 
 trips["trip_id"] = trips["trip_id"].astype(str)
 
-# Pick one trip per route + direction so we do not repeat the same line many times.
-# This keeps the main stop sequence for each route/direction while avoiding duplicate scheduled trips.
+# Keep one representative trip per route/direction.
 one_trip = trips.drop_duplicates(
     subset=["route_id", "direction_id"],
     keep="first"
@@ -87,9 +80,7 @@ trip_ids = one_trip["trip_id"].tolist()
 print("Using", len(trip_ids), "trips (one per route/direction)")
 
 
-# -----------------------------
-# Load stop_times
-# -----------------------------
+# Load stop_times.
 
 print("Loading stop_times (this can take a bit)...")
 
@@ -111,11 +102,8 @@ stop_times = stop_times.sort_values(
 print("Stop times filtered down to", len(stop_times), "rows")
 
 
-# -----------------------------
-# Build TTC stop-level graph
-# Nodes = stop IDs
-# Edges = consecutive stops along a trip
-# -----------------------------
+# Build the TTC stop-level graph.
+# Nodes are stop IDs; edges connect consecutive stops on a trip.
 
 G = nx.Graph()
 
@@ -133,16 +121,13 @@ print("Nodes:", G.number_of_nodes())
 print("Edges:", G.number_of_edges())
 
 
-# -----------------------------
-# Add walking transfers at station hubs
-# -----------------------------
+# Add walking transfers at station hubs.
 
 print("\nAdding walking transfers at station hubs...")
 
 MAX_WALK = 150  # metres
 
-# These are GTFS stops that look like station stops.
-# We use them to add transfer edges between nearby station-related stop IDs.
+# Station-like GTFS stops get transfer edges between nearby stop IDs.
 hub_stops = stops[
     stops["stop_name"].str.contains(
         "Station",
@@ -157,7 +142,7 @@ print("Hub stops found (Station in name):", len(hub_stops))
 
 
 def get_distance_m(lat1, lon1, lat2, lon2):
-    R = 6371000  # Earth radius in metres
+    R = 6371000  # Earth radius in metres.
 
     lat1 = math.radians(lat1)
     lat2 = math.radians(lat2)
@@ -209,9 +194,7 @@ print("Nodes:", G.number_of_nodes())
 print("Edges:", G.number_of_edges())
 
 
-# -----------------------------
-# Centrality calculations
-# -----------------------------
+# Centrality calculations.
 
 print("\nCalculating degree...")
 degree = nx.degree_centrality(G)
@@ -238,9 +221,7 @@ betweenness = nx.betweenness_centrality(
 )
 
 
-# -----------------------------
-# Graph-level metrics
-# -----------------------------
+# Graph-level metrics.
 
 print("\nCalculating graph metrics...")
 
@@ -272,9 +253,7 @@ path_graph = sample_graph.subgraph(largest_sample_component).copy()
 avg_path = nx.average_shortest_path_length(path_graph)
 
 
-# -----------------------------
-# Build centrality results table
-# -----------------------------
+# Build the centrality results table.
 
 results = pd.DataFrame({
     "stop_id": list(closeness.keys()),
@@ -323,10 +302,8 @@ top_betweenness = results.sort_values(
 ).head(10)
 
 
-# -----------------------------
-# Hub-only centrality tables
-# Collapse repeated station names into one row per station
-# -----------------------------
+# Hub-only centrality tables.
+# Collapse repeated station names into one row per station.
 
 hub_results = results[
     results["is_hub"]
@@ -363,9 +340,7 @@ top_hub_betweenness = (
 )
 
 
-# -----------------------------
-# Network summary
-# -----------------------------
+# Network summary.
 
 network_summary = pd.DataFrame({
     "Metric": [
@@ -401,9 +376,7 @@ print("\nTop hub betweenness:")
 print(top_hub_betweenness)
 
 
-# -----------------------------
-# Traffic analysis
-# -----------------------------
+# Traffic analysis.
 
 print("\nTraffic...")
 
@@ -430,9 +403,7 @@ busy_routes = (
 print(busy_routes)
 
 
-# -----------------------------
-# Disruption analysis
-# -----------------------------
+# Disruption analysis.
 
 print("\nDisruptions...")
 
@@ -477,9 +448,7 @@ print(sc_delays)
 print(sub_delays)
 
 
-# -----------------------------
-# Helper for markdown tables
-# -----------------------------
+# Helper for markdown tables.
 
 def df_to_md(df):
     lines = [
@@ -498,9 +467,7 @@ def df_to_md(df):
     return "\n".join(lines)
 
 
-# -----------------------------
-# Write markdown summary
-# -----------------------------
+# Write the markdown summary.
 
 summary_path = f"{OUT}/TYPE_II_STOPTIMES_RESULTS_SUMMARY.md"
 

@@ -1,32 +1,4 @@
-"""
-EECS4414 — TTC Graph Builder (Shared Module)
-=============================================
-Builds the directed stop-to-stop TTC network from GTFS data.
-Import this in any analysis script to get a consistent graph:
-
-    from graph_builder import build_graph
-    G, giant = build_graph()
-
-Parameters
-----------
-sample_rows : int or None
-    Number of rows to read from stop_times.csv.
-    Set to None for the full dataset (slower but complete).
-    Default: 500_000  (fast, covers most of the network)
-
-Returns
--------
-G : nx.DiGraph
-    Full directed graph.  Each node has: name, lat, lon.
-    Each edge has weight: 1 / trip-frequency count.
-    Lower weight = more trips = cheaper for Dijkstra.
-    Dijkstra therefore favours well-served corridors.
-giant : nx.DiGraph
-    Subgraph induced by the largest weakly-connected component of G.
-
-Run from the project root (ttc-network-analysis/):
-    python evaluation/type_I/graph_builder.py   ← prints a quick summary
-"""
+"""Build the TTC stop network from GTFS data."""
 
 import csv as _csv
 
@@ -34,15 +6,11 @@ import pandas as pd
 import networkx as nx
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Default configuration  (override by passing arguments to build_graph)
-# ──────────────────────────────────────────────────────────────────────────────
+# Default configuration.
 DEFAULT_SAMPLE_ROWS = 500_000
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Internal helpers
-# ──────────────────────────────────────────────────────────────────────────────
+# Internal helpers.
 
 def _load_stops() -> pd.DataFrame:
     """Load stop coordinates, trying completegtfs/ then Complete GTFS/."""
@@ -95,32 +63,18 @@ def _load_stop_times(sample_rows) -> pd.DataFrame:
     )
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Public API
-# ──────────────────────────────────────────────────────────────────────────────
+# Public API.
 
 def build_graph(sample_rows: int = DEFAULT_SAMPLE_ROWS):
-    """
-    Build and return the TTC stop network.
+    """Build and return the TTC stop network."""
 
-    Parameters
-    ----------
-    sample_rows : int or None
-        Rows to read from stop_times.  None = full dataset.
-
-    Returns
-    -------
-    G     : nx.DiGraph  — full network
-    giant : nx.DiGraph  — largest weakly-connected component
-    """
-
-    # ── Step 1: stops → nodes ─────────────────────────────────────────────────
+    # Step 1: stops -> nodes.
     stops = _load_stops()
     stops = stops.dropna(subset=["stop_lat", "stop_lon"])
     stops["stop_id"] = stops["stop_id"].astype(int)
     print(f"  [graph_builder] {len(stops):,} stops loaded")
 
-    # ── Step 2: stop_times → edges ────────────────────────────────────────────
+    # Step 2: stop_times -> edges.
     stop_times = _load_stop_times(sample_rows)
     stop_times = stop_times.sort_values(["trip_id", "stop_sequence"])
     stop_times["next_stop"] = (
@@ -136,11 +90,11 @@ def build_graph(sample_rows: int = DEFAULT_SAMPLE_ROWS):
         .size()
         .reset_index(name="trip_count")
     )
-    # Invert so Dijkstra treats high-frequency edges as cheaper (more desirable)
+    # Invert so busier edges are cheaper for Dijkstra.
     edge_weights["weight"] = 1.0 / edge_weights["trip_count"]
     print(f"  [graph_builder] {len(edge_weights):,} unique directed edges")
 
-    # ── Step 3: construct DiGraph ─────────────────────────────────────────────
+    # Step 3: build the directed graph.
     G = nx.DiGraph()
 
     for _, row in stops.iterrows():
@@ -156,14 +110,14 @@ def build_graph(sample_rows: int = DEFAULT_SAMPLE_ROWS):
             G.add_edge(
                 row["stop_id"],
                 row["next_stop"],
-                weight=row["weight"],        # 1 / trip_count  (lower = busier)
-                trip_count=row["trip_count"], # raw trip frequency for reference
+                weight=row["weight"],        # 1 / trip_count.
+                trip_count=row["trip_count"], # Raw trip count.
             )
 
     print(f"  [graph_builder] graph built → "
           f"{G.number_of_nodes():,} nodes, {G.number_of_edges():,} edges")
 
-    # ── Step 4: giant component ───────────────────────────────────────────────
+    # Step 4: extract the giant component.
     G_und      = G.to_undirected()
     giant_set  = max(nx.connected_components(G_und), key=len)
     giant      = G.subgraph(giant_set).copy()
@@ -173,9 +127,7 @@ def build_graph(sample_rows: int = DEFAULT_SAMPLE_ROWS):
     return G, giant
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Quick smoke-test when run directly
-# ──────────────────────────────────────────────────────────────────────────────
+# Quick smoke test when run directly.
 if __name__ == "__main__":
     print("Building TTC graph …")
     G, giant = build_graph()

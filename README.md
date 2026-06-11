@@ -44,4 +44,4 @@ Then run the scripts you need from the repo root.
 
 ## Notes
 
-- Most scripts read from `dataset/completegtfs/`; several also fall back to `dataset/Complete GTFS/`.
+- Most scripts read from `dataset/completegtfs/` and several also fall back to `dataset/Complete GTFS/`.

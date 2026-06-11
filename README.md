@@ -45,5 +45,3 @@ Then run the scripts you need from the repo root.
 ## Notes
 
 - Most scripts read from `dataset/completegtfs/`; several also fall back to `dataset/Complete GTFS/`.
-- Open `website_maps/ttc_interactive.html` in a browser to explore the interactive map.
-- The map uses the generated `website_maps/ttc_metric_layers.js` data file and external Leaflet/Esri tiles.

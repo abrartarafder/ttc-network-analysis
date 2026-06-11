@@ -9,7 +9,7 @@ It models the TTC as a directed weighted graph built from GTFS stop sequences, t
 - `evaluation/type_I/` - graph building, centrality metrics, PageRank, routing comparisons, edge-weight experiments, and disruption simulations
 - `evaluation/type_II/` - GTFS stop-time analysis and final bottleneck/disruption visuals
 - `evaluation/type_III/` - scalability and graph-structure efficiency experiments
-- `website_maps/` - interactive TTC map and metric layers
+- `website_maps/` - interactive TTC map and metric layers (Please note that the website is not hosted through this repository so some code may be outdated)
 - `dataset/` - GTFS feed plus disruption and traffic CSV files
 - `outputs/` - generated charts, tables, and route visualizations
 

@@ -1,4 +1,4 @@
-# Type II — Complete Findings Reference (June 6, 2026)
+# Type II — Complete Findings Reference 
 
 Study guide for slides and report writing. All numbers from `June6_Results/important/` after clustering fixes (Bloor–Yonge merge, Sheppard–Yonge parser fix).
 

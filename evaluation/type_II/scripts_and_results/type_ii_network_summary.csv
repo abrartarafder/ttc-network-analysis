@@ -1,0 +1,15 @@
+metric,value
+nodes,8056
+edges,12472
+route_edges_only,9041
+cluster_clique_edges_added,3360
+walking_transfer_edges_added,71
+station_clusters,140
+collapsed_station_entities,140
+largest_component_fraction,0.9992552135054618
+density,0.00038439797889016486
+clustering_coefficient,0.09838710234686758
+average_path_length,30.264915652498015
+betweenness_k_stop,500
+betweenness_station,exact
+trips_used,464

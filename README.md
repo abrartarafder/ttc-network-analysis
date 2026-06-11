@@ -22,7 +22,6 @@ It models the TTC as a directed weighted graph built from GTFS stop sequences, t
 
 ## Common Entry Points
 
-- `python3 evaluation/type_I/type1_abrar.py`
 - `python3 evaluation/type_I/PageRank/pagerank.py`
 - `python3 evaluation/type_I/algoComparison.py`
 - `python3 evaluation/type_I/simulations.py`
